@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Textarea } from '@/components/ui/textarea';
+import Editor from '@monaco-editor/react';
 import { Button } from '@/components/ui/button';
 import { Play, Save, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -64,6 +64,25 @@ export default App;`);
   const handleSave = () => {
     // TODO: Implement save functionality
     console.log('Saving file:', selectedFile?.name);
+  };
+
+  const getLanguageFromFileName = (fileName: string): string => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'js': return 'javascript';
+      case 'ts': return 'typescript';
+      case 'jsx': return 'javascript';
+      case 'tsx': return 'typescript';
+      case 'py': return 'python';
+      case 'java': return 'java';
+      case 'cpp': case 'c++': return 'cpp';
+      case 'c': return 'c';
+      case 'html': return 'html';
+      case 'css': return 'css';
+      case 'json': return 'json';
+      case 'md': return 'markdown';
+      default: return 'plaintext';
+    }
   };
 
   const handleExecute = async () => {
@@ -135,12 +154,23 @@ export default App;`);
 
       {/* Code Editor Area */}
       <div className="flex-1 flex">
-        <div className="flex-1 p-4">
-          <Textarea
+        <div className="flex-1">
+          <Editor
+            height="100%"
+            language={getLanguageFromFileName(selectedFile.name)}
             value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="h-full font-mono text-sm resize-none"
-            placeholder="Start typing your code..."
+            onChange={(value) => setCode(value || '')}
+            theme="vs-dark"
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              lineNumbers: 'on',
+              roundedSelection: false,
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              tabSize: 2,
+              wordWrap: 'on'
+            }}
           />
         </div>
         
