@@ -1,73 +1,105 @@
-# Welcome to your Lovable project
+# CollabIDE
 
-## Project info
+CollabIDE is a real‑time collaborative code editor where multiple developers can join a session, work in the same files, and talk through changes without leaving the browser.
 
-**URL**: https://lovable.dev/projects/830a0c53-0a26-4e84-a8d6-3a6585490620
+## Features
 
-## How can I edit this code?
+- **Live code sessions**: Create named sessions, invite others with a link, and see each other typing in real time.
+- **Presence & cursors**: Each collaborator has their own color, so you can tell who is editing where.
+- **Built‑in chat**: Keep the discussion next to the code with a simple real‑time chat sidebar.
+- **File explorer**: Organise files in a tree, create new files, and switch between them quickly.
+- **Modern editor**: Monaco (the VS Code editor) with syntax highlighting, multiple languages, and a dark theme.
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Editor**: Monaco
+- **Realtime layer**: Socket.io
+- **Backend**: Node.js + Express
+- **State / storage**: Redis (with an in‑memory fallback for local dev)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/830a0c53-0a26-4e84-a8d6-3a6585490620) and start prompting.
+## Running the project locally
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 16 or newer
+- Docker (for the easiest setup) or a local Redis instance
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Option 1 – Run everything with Docker
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+git clone <your-repo-url>
+cd placement-ace-perntainer
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Build images and start frontend, backend and Redis
+docker-compose up -d --build
 ```
 
-**Edit a file directly in GitHub**
+Then open `http://localhost` in your browser.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Option 2 – Run with Node + local Redis
 
-**Use GitHub Codespaces**
+```bash
+git clone <your-repo-url>
+cd placement-ace-perntainer
+npm install
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Start Redis (either via Docker or locally), for example:
 
-## What technologies are used for this project?
+```bash
+docker run -d -p 6379:6379 redis:alpine
+```
 
-This project is built with:
+Then run the app:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+npm run dev:full
+```
 
-## How can I deploy this project?
+Open `http://localhost:5173` in your browser.
 
-Simply open [Lovable](https://lovable.dev/projects/830a0c53-0a26-4e84-a8d6-3a6585490620) and click on Share -> Publish.
+## Environment variables
 
-## Can I connect a custom domain to my Lovable project?
+Create a `.env` file in the project root if you want to override defaults:
 
-Yes, you can!
+```env
+REDIS_URL=redis://localhost:6379
+PORT=3001
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## High‑level structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```text
+src/
+  components/
+    CodeEditor.tsx        // Monaco editor with collaboration hooks
+    FileExplorer.tsx      // Simple file tree panel
+    IDEHeader.tsx         // Top bar with session info and actions
+    SessionManager.tsx    // Session list + create/join flow
+    CollaborativeChat.tsx // Chat panel for each session
+    ui/                   // Shared UI primitives
+  lib/
+    socket.ts             // Socket.io client setup + helpers
+  pages/
+    Index.tsx             // Landing and main layout
+  App.tsx
+
+server/
+  index.js                // Express + Socket.io + Redis integration
+```
+
+## Deployment notes
+
+- The repository includes:
+  - A `Dockerfile` for the frontend (Vite build served via nginx).
+  - A `server/Dockerfile` for the Node/Express backend.
+  - A `docker-compose.yml` that wires frontend, backend and Redis together.
+- In practice you can:
+  - Use `docker-compose` on a VM (or a Docker‑friendly PaaS) and point your domain at the frontend container.
+  - Or deploy backend and frontend separately and configure `socket.ts` to point at your backend URL.
+
+## License
+
+MIT – feel free to experiment with it, extend it, or adapt it to your own workflow.
