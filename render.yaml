@@ -5,7 +5,7 @@ services:
     region: oregon
     maxmemoryPolicy: noeviction
     ipAllowList:
-      - cidrBlock: 0.0.0.0/0
+      - source: 0.0.0.0/0
         description: Allow all connections
 
   - type: web
