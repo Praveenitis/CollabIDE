@@ -1,5 +1,4 @@
 services:
-<<<<<<< HEAD
   - type: redis
     name: collabide-redis
     plan: free
@@ -14,26 +13,11 @@ services:
     buildCommand: npm ci
     startCommand: node server/index.js
     envVars:
-=======
-  # Backend service
-  - type: web
-    name: collabide-backend
-    env: docker
-    dockerfilePath: ./server/Dockerfile
-    dockerContext: .
-    dockerCommand: node server/index.js
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 3001
->>>>>>> 8410cb1e6981a90591eeb8cb752d93b8745d0401
       - key: REDIS_URL
         fromService:
           type: redis
           name: collabide-redis
           property: connectionString
-<<<<<<< HEAD
       - key: NODE_ENV
         value: production
       - key: PORT
@@ -53,32 +37,3 @@ services:
         value: https://collabide-backend.onrender.com
       - key: VITE_SOCKET_URL
         value: https://collabide-backend.onrender.com
-=======
-    healthCheckPath: /api/sessions
-    numInstances: 1
-
-  # Frontend service
-  - type: web
-    name: collabide-frontend
-    env: docker
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    envVars:
-      - key: BACKEND_HOST
-        fromService:
-          type: web
-          name: collabide-backend
-          property: host
-      - key: BACKEND_PORT
-        value: 3001
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-
-  # Redis service
-  - type: redis
-    name: collabide-redis
-    plan: free
-    maxmemoryPolicy: allkeys-lru
->>>>>>> 8410cb1e6981a90591eeb8cb752d93b8745d0401
