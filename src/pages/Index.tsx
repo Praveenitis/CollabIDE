@@ -4,7 +4,7 @@ import { FileExplorer } from '@/components/FileExplorer';
 import { CodeEditor } from '@/components/CodeEditor';
 import { SessionManager } from '@/components/SessionManager';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import { Session, User, socketUtils, socket } from '@/lib/socket';
+import { Session, User, socketUtils, socket, getApiUrl } from '@/lib/socket';
 import { v4 as uuidv4 } from 'uuid';
 
 interface FileNode {
@@ -42,8 +42,9 @@ const Index = () => {
     const sessionId = urlParams.get('session');
     
     if (sessionId) {
-      // Auto-join session from URL (use relative URL for Docker/nginx)
-      fetch(`/api/sessions/${sessionId}`)
+      // Auto-join session from URL
+      const apiUrl = getApiUrl();
+      fetch(`${apiUrl}/api/sessions/${sessionId}`)
         .then(res => res.json())
         .then(session => {
           setCurrentSession(session);

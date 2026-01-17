@@ -1,8 +1,15 @@
 import { io, Socket } from 'socket.io-client';
 
+// Get API base URL from environment or fallback to current origin
+export const getApiUrl = (): string => {
+  return import.meta.env.VITE_API_URL || window.location.origin;
+};
+
 // Socket.io client instance
-// Use the current origin so it works with Docker/nginx proxy as well as dev
-export const socket: Socket = io(window.location.origin, {
+// Use environment variable for backend URL, fallback to current origin for local dev
+const socketUrl = import.meta.env.VITE_SOCKET_URL || window.location.origin;
+
+export const socket: Socket = io(socketUrl, {
   autoConnect: false,
   transports: ['websocket', 'polling']
 });

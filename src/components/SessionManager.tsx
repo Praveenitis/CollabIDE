@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from '@/components/ui/badge';
 import { Users, Plus, Play, Copy } from 'lucide-react';
 import { toast } from 'sonner';
-import { Session, User, socketUtils } from '@/lib/socket';
+import { Session, User, socketUtils, getApiUrl } from '@/lib/socket';
 
 interface SessionManagerProps {
   onSessionJoin: (session: Session, user: User) => void;
@@ -27,8 +27,8 @@ export const SessionManager = ({ onSessionJoin, currentUser }: SessionManagerPro
 
   const fetchSessions = async () => {
     try {
-      // Use relative URL so it works both in Docker (nginx proxy) and dev
-      const response = await fetch('/api/sessions');
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/sessions`);
       const data = await response.json();
       setSessions(data);
     } catch (error) {
@@ -47,8 +47,8 @@ export const SessionManager = ({ onSessionJoin, currentUser }: SessionManagerPro
 
     setIsCreating(true);
     try {
-      // Use relative URL so it works both in Docker (nginx proxy) and dev
-      const response = await fetch('/api/sessions', {
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSession)
