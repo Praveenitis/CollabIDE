@@ -21,16 +21,23 @@ RUN npm run build
 
 # Production image, copy all the files and run the app
 FROM nginx:alpine AS runner
-WORKDIR /app
+
+# Install gettext for envsubst
+RUN apk add --no-cache gettext
 
 # Copy built application
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Create templates directory and copy nginx config template
+RUN mkdir -p /etc/nginx/templates
+COPY nginx.conf.template /etc/nginx/templates/
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # Expose port
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+# Start nginx using entrypoint script
+ENTRYPOINT ["/docker-entrypoint.sh"] 

@@ -9,8 +9,9 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Vite dev server
-    methods: ["GET", "POST"]
+    origin: process.env.FRONTEND_URL || "*", // Allow all origins in production (or set FRONTEND_URL env var)
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -278,7 +279,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Socket.io server ready for real-time collaboration`);

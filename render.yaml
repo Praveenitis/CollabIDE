@@ -1,0 +1,45 @@
+services:
+  # Backend service
+  - type: web
+    name: collabide-backend
+    env: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: .
+    dockerCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: collabide-redis
+          property: connectionString
+    healthCheckPath: /api/sessions
+    numInstances: 1
+
+  # Frontend service
+  - type: web
+    name: collabide-frontend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: BACKEND_HOST
+        fromService:
+          type: web
+          name: collabide-backend
+          property: host
+      - key: BACKEND_PORT
+        value: 3001
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Redis service
+  - type: redis
+    name: collabide-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
