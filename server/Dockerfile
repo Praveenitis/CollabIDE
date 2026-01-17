@@ -13,5 +13,5 @@ COPY server/ ./server/
 # Expose port
 EXPOSE 3001
 
-# Start the server (using node with ES modules support)
-CMD ["node", "--experimental-modules", "server/index.js"] 
+# Start the server
+CMD ["node", "server/index.js"] 

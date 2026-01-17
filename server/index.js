@@ -7,9 +7,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 const server = createServer(app);
+
+// Determine allowed origins based on environment
+const allowedOrigins = [
+  'http://localhost:5173', // Vite dev server
+  'http://localhost:3000', // Local serve
+  process.env.CORS_ORIGIN || 'http://localhost:5173'
+];
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Vite dev server
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });
