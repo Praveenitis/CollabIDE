@@ -4,6 +4,9 @@ services:
     plan: free
     region: oregon
     maxmemoryPolicy: noeviction
+    ipAllowList:
+      - cidrBlock: 0.0.0.0/0
+        description: Allow all connections
 
   - type: web
     name: collabide-backend
